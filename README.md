@@ -1,0 +1,5 @@
+# springcloud
+微服务
+通过springcloud，搭建了一个简单微服务，服务之间通过freign调用（服务之间也可以通过resttemplate调用，但是freign调用相对方便，不需要ip和端口，只需要从服务中心拿到服务名称调用即可，代码中做了一个简单的两服务之间调用的demo），访问服务通过gateway网关进行访问(也可以使用zuul，但是目前springboot直接成了zull1版本，这个版本的性能相对于gateway网关较低)，服务注册中心使用eureka（服务注册中心可以选择consul，目前eureka2.x已经不再维护，consul功能丰富是一个不错的选择），并加入服务熔断。 
+服务注册中心:
+！
