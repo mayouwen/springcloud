@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: adminServer
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8900/eureka/
+    registry-fetch-interval-seconds: 5 #eureka client缓存刷新时间

@@ -1,0 +1,96 @@
+server:
+  port: 8908
+
+logging:
+  config: classpath:logback.xml
+  path: C:/mylogs
+
+spring:
+  application:
+    name: gateway
+  # dataSource
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    #driverClassName: com.mysql.jdbc.Driver
+    #url: jdbc:mysql://localhost:3306/gateway?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+    #username: root
+    #password: root
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.110.28:5432/postgres
+    username: postgres
+    password: postgres
+    initialSize: 1
+    minIdle: 3
+    maxActive: 20
+    # 配置获取连接等待超时的时间
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    # 打开PSCache，并且指定每个连接上PSCache的大小
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat,wall,slf4j
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    # 合并多个DruidDataSource的监控数据
+    #useGlobalDataSourceStat: true
+  boot:
+    admin:
+      url: http://localhost:8905
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  cloud:
+    gateway:
+      discovery: #是否与服务发现组件进行结合，通过 serviceId(必须设置成大写) 转发到具体的服务实例。默认为false，设为true便开启通过服务中心的自动根据 serviceId 创建路由的功能。
+        locator:
+          enabled: true
+      routes:
+      - id: REGISTERSERVICE
+        uri: lb://REGISTERSERVICE
+        predicates:
+          - Path=/REGISTERSERVICE/**
+      - id: FOREIGNSERVICE
+        uri: lb://FOREIGNSERVICE
+        predicates:
+          - Path=/FOREIGNSERVICE/**
+        filters:
+          - name: RequestRateLimiter
+            args:
+              key-resolver: '#{@remoteAddrKeyResolver}'
+              redis-rate-limiter.replenishRate: 10  #允许用户每秒执行多少请求，而不会丢弃任何请求。即令牌桶填充的速率
+              redis-rate-limiter.burstCapacity: 20  #令牌桶容量，即令牌桶可以容纳的令牌数。将此值设置为零将阻止所有请求。
+          #- AddResponseHeader=X-Response-Default-Foo，Default-Bar
+      #default-filters:
+        #- Elapsed=true
+#指定zipkin服务端的url
+  zipkin:
+    base-url: http://localhost:8602
+#设定样本收集的比率为100%
+  sleuth:
+    sampler:
+      probability: 100
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8900/eureka/
+    registry-fetch-interval-seconds: 5 #eureka client缓存刷新时间
+
+management:
+  security:
+    enabled: false
+
+
+feign:
+  hystrix:
+    enabled: true
+
+

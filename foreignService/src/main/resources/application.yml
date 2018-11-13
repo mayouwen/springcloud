@@ -1,0 +1,93 @@
+server:
+  session-timeout: 1800
+#    tomcat:
+#        max-threads: 1000
+#        min-spare-threads: 30
+  port: 8904
+#    uri-encoding: utf-8
+security:
+  basic:
+    enabled: false
+spring:
+  application:
+    name: foreignService
+  boot:
+      admin:
+        url: http://localhost:8905
+#指定zipkin服务端的url
+  zipkin:
+    base-url: http://localhost:8602
+#设定样本收集的比率为100%
+  sleuth:
+    sampler:
+      probability: 100
+  thymeleaf:
+    mode: LEGACYHTML5
+    cache: false
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  profiles: 
+    active: pro
+  http:
+    multipart:
+      max-file-size: 30Mb
+      max-request-size: 30Mb
+  devtools:
+    restart:
+      enabled: true
+  cache:
+    type: ehcache
+    ehcache:
+      config: config/ehcache.xml
+#[弃用]配置缓存和session存储方式，默认ehcache,可选redis,[弃用]调整至 spring cache type【shiro.用户，权限，session，spring.cache通用】
+#[弃用]cacheType: ehcache
+
+management:
+  security:
+    enabled: false
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8900/eureka/
+    registry-fetch-interval-seconds: 5 #eureka client缓存刷新时间
+  instance:
+    preferIpAddress: true
+    appname: foreignService
+    instance-id: foreignService
+    lease-expiration-duration-in-seconds: 10 #服务失效心跳时长,10S
+    lease-renewal-interval-in-seconds: 5 #服务主动心跳刷新时间，5s
+
+#quartz定时任务配置
+quartz:
+  enable: false
+  cronExpression: 0/10 * * * * ?
+
+
+    
+#ftp config
+ftp:
+  host: 192.168.110.27
+  port: 21
+  username: public
+  password: 123456
+  bufferSize: 8096
+  initialSize: 1
+#ftp连接池配置
+  pool:
+    testOnBorrow: true
+    testWhileIdle: true
+    timeBetweenEvictionRunsMillis: 300000
+    minEvictableIdleTimeMillis: -1
+    softMinEvictableIdleTimeMillis: 600000
+    blockWhenExhausted: false
+    minIdle: 2
+    maxIdle: 8
+    maxTotal: 8
+  identity:
+    authentication:
+      backup:
+        path: authenticationbackup 
+      service: 
+        path: authentication

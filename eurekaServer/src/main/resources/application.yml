@@ -1,0 +1,64 @@
+server:
+  port: 8900
+
+logging:
+  config: classpath:logback.xml
+  path: C:/mylogs
+
+spring:
+  application:
+    name: eureka
+  # dataSource
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.110.28:5432/postgres
+    username: postgres
+    password: postgres
+    initialSize: 1
+    minIdle: 3
+    maxActive: 20
+    # 配置获取连接等待超时的时间
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    # 打开PSCache，并且指定每个连接上PSCache的大小
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat,wall,slf4j
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    # 合并多个DruidDataSource的监控数据
+    #useGlobalDataSourceStat: true
+  boot:
+    admin:
+      url: http://localhost:8905
+  freemarker:
+    prefer-file-system-access: false
+
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    instance-id: eurekaService
+    appname: eurekaService
+    lease-expiration-duration-in-seconds: 10 #服务失效心跳时长,10S
+    lease-renewal-interval-in-seconds: 5 #服务主动心跳刷新时间，5s
+#    health-check-url:  #health路径
+  server:
+    eviction-interval-timer-in-ms: 5000 #服务主动失效检查间隔, 5s
+    response-cache-update-interval-ms: 10000 #client调用服务列表刷新间隔,10s
+    use-read-only-response-cache: false #禁用readOnlyCacheMap
+  client:
+    registerWithEureka: true #注册到Eureka
+    fetchRegistry: false #是否从eureka获取注册信息
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
