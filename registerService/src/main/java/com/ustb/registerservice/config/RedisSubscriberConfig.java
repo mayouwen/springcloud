@@ -34,6 +34,7 @@ public class RedisSubscriberConfig {
     public RedisMessageListenerContainer getRedisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory, MessageListenerAdapter messageListenerAdapter) {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+        //订阅了一个叫chat的通道，可以添加多个MessageListener
         redisMessageListenerContainer.addMessageListener(messageListenerAdapter, new PatternTopic("chat"));
         return redisMessageListenerContainer;
     }
