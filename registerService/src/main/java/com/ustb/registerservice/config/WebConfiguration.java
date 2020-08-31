@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.cbor.MappingJackson2CborHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
     }
 
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(getMappingJackson2CborHttpMessageConverter());
+        converters.add(getMappingJacksonHttpMessageConverter());
         converters.add(stringHttpMessageConverter());
     }
 
@@ -41,12 +43,21 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
         return stringHttpMessageConverter;
     }
 
-    private MappingJackson2CborHttpMessageConverter getMappingJackson2CborHttpMessageConverter() {
-        MappingJackson2CborHttpMessageConverter mappingJackson2CborHttpMessageConverter = new MappingJackson2CborHttpMessageConverter();
+    private MappingJackson2HttpMessageConverter getMappingJacksonHttpMessageConverter() {
+        MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategyBase());
-        mappingJackson2CborHttpMessageConverter.setObjectMapper(objectMapper);
-        return mappingJackson2CborHttpMessageConverter;
+        mappingJackson2HttpMessageConverter.setObjectMapper(objectMapper);
+        return mappingJackson2HttpMessageConverter;
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        super.addResourceHandlers(registry);
     }
 
 }

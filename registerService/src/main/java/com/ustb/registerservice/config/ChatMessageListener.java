@@ -1,8 +1,6 @@
 package com.ustb.registerservice.config;
 
 
-import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 
 /**
  * ClassName：ChatMessageListener
@@ -10,9 +8,9 @@ import org.springframework.data.redis.connection.MessageListener;
  * author: mayouwen
  * date: 2020/8/28
  */
-public class ChatMessageListener implements MessageListener {
-    @Override
-    public void onMessage(Message message, byte[] bytes) {
-
-    }
-}
+//public class ChatMessageListener implements MessageListener {
+//    @Override
+//    public void onMessage(Message message, byte[] bytes) {
+//
+//    }
+//}
